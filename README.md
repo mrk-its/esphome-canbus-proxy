@@ -64,4 +64,9 @@ python -m can.viewer -i esp_can -c /dev/ttyACM0
 
 ## Limitations
 
-* extended_ids are not supported
+* extended can ids are not supported (yet)
+* remote_transmission_request (RTR) frames are not supported (yet)
+
+## Community
+
+* [Discord Server](https://discord.gg/VXjUSnUWsd)
