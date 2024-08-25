@@ -13,7 +13,10 @@ DATA_RE = re.compile(r"\[canbus_proxy:\d*\]: ([0-9a-f]{3})(( [0-9a-f][0-9a-f]){0
 class EspCan(can.bus.BusABC):
     def __init__(self, channel, **kwargs):
         logger.debug("channel: %s", channel)
-        self.device = serial.Serial(channel, timeout=1.0)
+        self.device = serial.Serial(channel, timeout=1.0, baudrate=4000000)
+        lines = self.device.readlines()
+        if lines:
+            logger.info("ignore %d lines present already in the input buffer", len(lines))
         self._filters = None
         self.channel_info = "esp_can"
 
@@ -22,6 +25,7 @@ class EspCan(can.bus.BusABC):
         can_id = msg.arbitration_id
         data = "".join(f" {b:02x}" for b in msg.data)
         self.device.write(f"{can_id:03x}{data}\r".encode("utf-8"))
+        self.device.flush()
 
     def _recv_internal(self, timeout=None):
         data = self.device.readline().decode("utf-8")
