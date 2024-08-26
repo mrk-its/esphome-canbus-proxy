@@ -9,6 +9,14 @@ logger = logging.getLogger(__name__)
 
 DATA_RE = re.compile(r"\[canbus_proxy:\d*\]: ([0-9a-f]{3})(( [0-9a-f][0-9a-f]){0,8}).*")
 
+ESP_LOG_LEVEL = re.compile(r"\[(D|I|W|E)\]")
+
+LEVELS = {
+    "D": logging.DEBUG,
+    "I": logging.INFO,
+    "W": logging.WARN,
+    "E": logging.ERROR,
+}
 
 class EspCan(can.bus.BusABC):
     def __init__(self, channel, **kwargs):
@@ -30,8 +38,6 @@ class EspCan(can.bus.BusABC):
 
     def _recv_internal(self, timeout=None):
         data = self.device.readline().decode("utf-8")
-        if data:
-            logger.debug("esp log: %s", data[0:-1])
         match = DATA_RE.search(data)
         msg = None
         if match:
@@ -50,4 +56,9 @@ class EspCan(can.bus.BusABC):
                 data=data,
             )
             logger.debug("recv: %r", msg)
+        else:
+            m = ESP_LOG_LEVEL.search(data)
+            if m:
+                level = LEVELS.get(m.group(1))
+                logger.log(level, "esp log: %s", data[0:-1])
         return msg, False
