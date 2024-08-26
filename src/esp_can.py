@@ -26,6 +26,7 @@ class EspCan(can.bus.BusABC):
         data = "".join(f" {b:02x}" for b in msg.data)
         self.device.write(f"{can_id:03x}{data}\r".encode("utf-8"))
         self.device.flush()
+        time.sleep(0.001)
 
     def _recv_internal(self, timeout=None):
         data = self.device.readline().decode("utf-8")
