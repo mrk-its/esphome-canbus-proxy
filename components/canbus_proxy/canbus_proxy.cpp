@@ -85,7 +85,7 @@ void CanbusProxy::loop() {
         is_parsed = 1;
       }
 
-      ESP_LOGI(TAG, "input: %s, parsed: %d", line_buffer.c_str(), is_parsed);
+      ESP_LOGD(TAG, "input: %s, parsed: %d", line_buffer.c_str(), is_parsed);
 
       line_buffer.clear();
     } else {
