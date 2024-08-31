@@ -23,6 +23,11 @@ esp32:
 logger:
   hardware_uart: USB_SERIAL_JTAG
   level: DEBUG
+
+  # increase rx buffer size. For now it requries this PR: https://github.com/esphome/esphome/pull/7364/files (not yet merged).
+  # default value is 512 bytes and may lead to lost packets (for example when CANOpen block transfer is used)
+  rx_buffer_size: 16k
+
   logs:
     wifi: INFO
     esp-idf: INFO
@@ -34,6 +39,10 @@ canbus:
     tx_pin: GPIO4
     can_id: 1
     bit_rate: 125kbps
+
+    # increase queue sizes for CANOpen block transfer (up to 128 frames can be sent in burst)
+    tx_queue_len: 128
+    rx_queue_len: 128
 
 external_components:
   - source: github://mrk-its/esphome-canbus-proxy
