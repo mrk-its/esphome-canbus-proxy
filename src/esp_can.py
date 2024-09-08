@@ -22,9 +22,11 @@ class EspCan(can.bus.BusABC):
     def __init__(self, channel, **kwargs):
         logger.debug("channel: %s", channel)
         self.device = serial.Serial(channel, timeout=1.0, baudrate=4000000)
-        lines = self.device.readlines()
-        if lines:
-            logger.info("ignore %d lines present already in the input buffer", len(lines))
+        t = time.time()
+        while time.time() - t < 5:
+            lines = self.device.readlines()
+            if lines:
+                logger.info("ignore %d lines present already in the input buffer", len(lines))
         self._filters = None
         self.channel_info = "esp_can"
 
