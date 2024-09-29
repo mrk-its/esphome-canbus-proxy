@@ -27,6 +27,15 @@ class EspCan(can.bus.BusABC):
             lines = self.device.readlines()
             if lines:
                 logger.info("ignore %d lines present already in the input buffer", len(lines))
+
+        # for some reason, after reset, ESP input buffer sometimes
+        # contain some data already. Few examples:
+        # 're to isolate al', 'O pins in sleep ', 'ins in sleep sta'
+        # if this happens first send CAN frame gets broken.
+        # To prevent that send few extra lines that will be ignored by esphome parser
+
+        self.device.write(b"esphome-canbus-proxy\r\r")
+
         self._filters = None
         self.channel_info = "esp_can"
 
