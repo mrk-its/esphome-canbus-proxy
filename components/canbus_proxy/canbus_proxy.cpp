@@ -106,6 +106,9 @@ void CanbusProxy::trigger(uint32_t can_id, bool use_extended_id, bool remote_tra
 }
 
 bool CanbusProxy::setup_internal() {
+  if(!this->canbus) {
+    return true;
+  }
   Automation<std::vector<uint8_t>, uint32_t, bool> *automation;
   LambdaAction<std::vector<uint8_t>, uint32_t, bool> *lambdaaction;
   canbus::CanbusTrigger *canbus_canbustrigger;
@@ -140,16 +143,18 @@ void CanbusProxy::send_serial_message(uint32_t can_id, bool use_extended_id, boo
 
 canbus::Error CanbusProxy::send_message_no_loopback(struct canbus::CanFrame *frame) {
   std::vector<uint8_t> data = std::vector<uint8_t>(frame->data, frame->data + frame->can_data_length_code);
-  this->canbus->send_data(frame->can_id, frame->use_extended_id, frame->remote_transmission_request, data);
-
+  if(this->canbus) {
+    this->canbus->send_data(frame->can_id, frame->use_extended_id, frame->remote_transmission_request, data);
+  }
   trigger(frame->can_id, frame->use_extended_id, frame->remote_transmission_request, data);
-
   return canbus::ERROR_OK;
 }
 
 canbus::Error CanbusProxy::send_message(struct canbus::CanFrame *frame) {
   std::vector<uint8_t> data = std::vector<uint8_t>(frame->data, frame->data + frame->can_data_length_code);
-  this->canbus->send_data(frame->can_id, frame->use_extended_id, frame->remote_transmission_request, data);
+  if(this->canbus) {
+    this->canbus->send_data(frame->can_id, frame->use_extended_id, frame->remote_transmission_request, data);
+  }
   send_serial_message(frame->can_id, frame->use_extended_id, frame->remote_transmission_request, data);
   return canbus::ERROR_OK;
 };

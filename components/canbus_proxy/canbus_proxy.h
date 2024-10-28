@@ -15,6 +15,11 @@ class CanbusProxy : public canbus::Canbus {
 
  public:
   canbus::Canbus *canbus;
+
+  CanbusProxy() {
+    this->canbus = nullptr;
+    line_buffer.reserve(512);
+  }
   CanbusProxy(canbus::Canbus *canbus) {
     this->canbus = canbus;
     line_buffer.reserve(512);

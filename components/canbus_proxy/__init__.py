@@ -26,7 +26,7 @@ DEPENDENCIES = ["logger"]
 
 CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(CanbusProxy),
-    cv.Required("canbus_id"): cv.use_id(CanbusComponent),
+    cv.Optional("canbus_id"): cv.use_id(CanbusComponent),
     cv.Optional(CONF_ON_FRAME): automation.validate_automation(
         {
             cv.GenerateID(CONF_TRIGGER_ID): cv.declare_id(CanbusTrigger),
@@ -43,7 +43,10 @@ CONFIG_SCHEMA = cv.Schema({
 
 
 async def to_code(config):
-    canbus = await cg.get_variable(config["canbus_id"])
+    if "canbus_id" in config:
+        canbus = await cg.get_variable(config["canbus_id"])
+    else:
+        canbus = None
     canbus_proxy = cg.new_Pvariable(config[CONF_ID], canbus)
     await cg.register_component(canbus_proxy, config)
 
