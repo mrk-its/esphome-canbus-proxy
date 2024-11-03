@@ -2,6 +2,7 @@ import logging
 import re
 import serial
 import time
+
 import can
 
 logger = logging.getLogger(__name__)
@@ -19,14 +20,20 @@ LEVELS = {
 }
 
 class EspCan(can.bus.BusABC):
-    def __init__(self, channel, **kwargs):
+    def __init__(self, channel, reset=False, after_reset_delay=2.0, clear_input_buffer=False, **kwargs):
         logger.debug("channel: %s", channel)
+        if reset:
+            import esptool
+            esptool.main(["--port", channel, "chip_id"])
+            time.sleep(after_reset_delay)
+
         self.device = serial.Serial(channel, timeout=1.0, baudrate=4000000)
-        t = time.time()
-        while time.time() - t < 5:
-            lines = self.device.readlines()
-            if lines:
-                logger.info("ignore %d lines present already in the input buffer", len(lines))
+        if clear_input_buffer:
+            t = time.time()
+            while time.time() - t < 5:
+                lines = self.device.readlines()
+                if lines:
+                    logger.info("ignore %d lines present already in the input buffer", len(lines))
 
         # for some reason, after reset, ESP input buffer sometimes
         # contain some data already. Few examples:

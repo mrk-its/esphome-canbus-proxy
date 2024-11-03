@@ -21,3 +21,6 @@ esp_can = "esp_can:EspCan"
 dev = [
     "black"
 ]
+esptool = [
+    "esptool"
+]
