@@ -20,7 +20,16 @@ LEVELS = {
 }
 
 class EspCan(can.bus.BusABC):
-    def __init__(self, channel, reset=False, after_reset_delay=2.0, clear_input_buffer=False, **kwargs):
+    def __init__(
+        self,
+        channel,
+        reset=False,
+        after_reset_delay=2.0,
+        clear_input_buffer=False,
+        send_delay_ms=1.0,
+        **kwargs
+    ):
+        self.send_delay_ms = send_delay_ms
         logger.debug("channel: %s", channel)
         if reset:
             import esptool
@@ -52,7 +61,8 @@ class EspCan(can.bus.BusABC):
         data = "".join(f" {b:02x}" for b in msg.data)
         self.device.write(f"{can_id:03x}{data}\r".encode("utf-8"))
         self.device.flush()
-        time.sleep(0.001)
+        if self.send_delay_ms:
+            time.sleep(0.001 * self.send_delay_ms)
 
     def _recv_internal(self, timeout=None):
         data = self.device.readline().decode("utf-8")
