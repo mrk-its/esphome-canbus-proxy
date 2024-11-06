@@ -2,6 +2,7 @@ import logging
 import re
 import serial
 import time
+import random
 
 import can
 
@@ -27,9 +28,12 @@ class EspCan(can.bus.BusABC):
         after_reset_delay=2.0,
         clear_input_buffer=False,
         send_delay_ms=1.0,
+        tx_error_ratio=0,
         **kwargs
     ):
         self.send_delay_ms = send_delay_ms
+        self.tx_error_ratio = tx_error_ratio
+
         logger.debug("channel: %s", channel)
         if reset:
             import esptool
@@ -56,6 +60,9 @@ class EspCan(can.bus.BusABC):
         self.channel_info = "esp_can"
 
     def send(self, msg):
+        if random.random() < self.tx_error_ratio:
+            logger.warning("injected error, loosing packet")
+            return
         logger.debug("send: %r", msg)
         can_id = msg.arbitration_id
         data = "".join(f" {b:02x}" for b in msg.data)
