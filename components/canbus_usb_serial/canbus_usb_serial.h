@@ -7,27 +7,25 @@ using namespace esphome;
 #include "esphome/core/defines.h"
 
 namespace esphome {
-namespace canbus_proxy {
+namespace canbus_usb_serial {
 const char *const TAG = "canbus_proxy";
 
-class CanbusProxy : public canbus::Canbus {
+class CanbusUsbSerial : public canbus::Canbus {
   std::string line_buffer;
 
  public:
   canbus::Canbus *canbus;
 
-  CanbusProxy() {
+  CanbusUsbSerial() {
     this->canbus = nullptr;
     line_buffer.reserve(512);
   }
-  CanbusProxy(canbus::Canbus *canbus) {
+  CanbusUsbSerial(canbus::Canbus *canbus) {
     this->canbus = canbus;
     line_buffer.reserve(512);
   }
-  // void add_trigger(UsbSerialMessageTrigger *trigger) { on_message = trigger; }
   void send_serial_message(uint32_t can_id, bool use_extended_id, bool remote_transmission_request,
                            const std::vector<uint8_t> &data);
-  // void add_trigger(canbus::CanbusTrigger *trigger) {}
 
   void setup();
   void loop() override;

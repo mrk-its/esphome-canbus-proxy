@@ -1,12 +1,12 @@
 #include "esphome.h"
-#include "canbus_proxy.h"
+#include "canbus_usb_serial.h"
 #include "driver/usb_serial_jtag.h"
 
 namespace esphome {
-namespace canbus_proxy {
+namespace canbus_usb_serial {
 
-void CanbusProxy::setup() {
-  ESP_LOGCONFIG(TAG, "Setting up CanbusProxy");
+void CanbusUsbSerial::setup() {
+  ESP_LOGCONFIG(TAG, "Setting up CanbusUsbSerial");
   if (!this->setup_internal()) {
     ESP_LOGE(TAG, "setup error!");
     this->mark_failed();
@@ -58,7 +58,7 @@ bool parse_can_frame(std::string &msg, struct canbus::CanFrame &frame) {
   return true;
 };
 
-void CanbusProxy::loop() {
+void CanbusUsbSerial::loop() {
   char data[256];
   int len = 0;
 #ifdef USE_LOGGER_USB_SERIAL_JTAG
@@ -95,7 +95,7 @@ void CanbusProxy::loop() {
   }
 }
 
-void CanbusProxy::trigger(uint32_t can_id, bool use_extended_id, bool remote_transmission_request,
+void CanbusUsbSerial::trigger(uint32_t can_id, bool use_extended_id, bool remote_transmission_request,
                           const std::vector<uint8_t> &data) {
   // fire all triggers
   // TODO: currently we can't check can_id, can_mask, remote_transmission_request because these trigger fields
@@ -105,7 +105,7 @@ void CanbusProxy::trigger(uint32_t can_id, bool use_extended_id, bool remote_tra
   }
 }
 
-bool CanbusProxy::setup_internal() {
+bool CanbusUsbSerial::setup_internal() {
   if(!this->canbus) {
     return true;
   }
@@ -128,7 +128,7 @@ bool CanbusProxy::setup_internal() {
   return true;
 }
 
-void CanbusProxy::send_serial_message(uint32_t can_id, bool use_extended_id, bool remote_transmission_request,
+void CanbusUsbSerial::send_serial_message(uint32_t can_id, bool use_extended_id, bool remote_transmission_request,
                                       const std::vector<uint8_t> &data) {
   char buf[256];
   sprintf(buf, "%03x", can_id);
@@ -141,7 +141,7 @@ void CanbusProxy::send_serial_message(uint32_t can_id, bool use_extended_id, boo
   ESP_LOGI(TAG, "%s", buf);
 }
 
-canbus::Error CanbusProxy::send_message_no_loopback(struct canbus::CanFrame *frame) {
+canbus::Error CanbusUsbSerial::send_message_no_loopback(struct canbus::CanFrame *frame) {
   std::vector<uint8_t> data = std::vector<uint8_t>(frame->data, frame->data + frame->can_data_length_code);
   if(this->canbus) {
     this->canbus->send_data(frame->can_id, frame->use_extended_id, frame->remote_transmission_request, data);
@@ -150,7 +150,7 @@ canbus::Error CanbusProxy::send_message_no_loopback(struct canbus::CanFrame *fra
   return canbus::ERROR_OK;
 }
 
-canbus::Error CanbusProxy::send_message(struct canbus::CanFrame *frame) {
+canbus::Error CanbusUsbSerial::send_message(struct canbus::CanFrame *frame) {
   std::vector<uint8_t> data = std::vector<uint8_t>(frame->data, frame->data + frame->can_data_length_code);
   if(this->canbus) {
     this->canbus->send_data(frame->can_id, frame->use_extended_id, frame->remote_transmission_request, data);
@@ -159,7 +159,7 @@ canbus::Error CanbusProxy::send_message(struct canbus::CanFrame *frame) {
   return canbus::ERROR_OK;
 };
 
-canbus::Error CanbusProxy::read_message(struct canbus::CanFrame *frame) { return canbus::ERROR_NOMSG; };
+canbus::Error CanbusUsbSerial::read_message(struct canbus::CanFrame *frame) { return canbus::ERROR_NOMSG; };
 
 }  // namespace canbus_proxy
 }  // namespace esphome
