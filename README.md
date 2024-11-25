@@ -44,12 +44,15 @@ canbus:
     tx_queue_len: 128
     rx_queue_len: 128
 
-external_components:
-  - source: github://mrk-its/esphome-canbus-proxy
+  - platform: canbus_usb_serial
+    id: can_bus_usb_serial
+    canbus_id: can_bus  # refers to physical can interface defined above
+    can_id: 1
 
-canbus_proxy:
-  id: can_bus_proxy
-  canbus_id: can_bus
+external_components:
+  - source: github://mrk-its/esphome-canbus-usb-serial
+
+
 ```
 
 ## python-can interface
@@ -57,18 +60,17 @@ canbus_proxy:
 Add esp_can module to your project:
 
 ```
-pip install esp_can@git+https://github.com/mrk-its/esphome-canbus-proxy
+pip install esp_usb_serial@git+https://github.com/mrk-its/esphome-canbus-usb-serial
 ```
 
-Now in `python-can` you can use `esp_can` interface. Single 'channel' parameter is accepted: path to your USB device, like `/dev/ttyACM0`.
+Now in `python-can` you can use `esp_usb_serial` interface. Single 'channel' parameter is accepted: path to your USB device, like `/dev/ttyACM0`.
 
 Example can.viewer session:
 
 ```
-pip install esp_can@git+https://github.com/mrk-its/esphome-canbus-proxy
+pip install esp_usb_serial@git+https://github.com/mrk-its/esphome-canbus-usb-serial
 pip install "python-can[viewer]"
-python -m can.viewer -i esp_can -c /dev/ttyACM0
-
+python -m can.viewer -i esp_usb_serial -c /dev/ttyACM0
 ```
 
 ## Limitations

@@ -20,7 +20,7 @@ LEVELS = {
     "E": logging.ERROR,
 }
 
-class EspCan(can.bus.BusABC):
+class EspUsbSerial(can.bus.BusABC):
     def __init__(
         self,
         channel,

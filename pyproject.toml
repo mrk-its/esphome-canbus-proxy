@@ -1,5 +1,5 @@
 [project]
-name = "esp_can"
+name = "esp_usb_serial"
 version = "0.0.1"
 authors = [
     {name="Mariusz Kryński", email="mrk@sed.pl"}
@@ -11,11 +11,8 @@ dependencies = [
     "pyserial",
 ]
 
-# [project.scripts]  # Optional
-# can2mqtt = "main:main"
-
 [project.entry-points."can.interface"]
-esp_can = "esp_can:EspCan"
+esp_usb_serial = "esp_usb_serial:EspUsbSerial"
 
 [project.optional-dependencies]
 dev = [
