@@ -9,7 +9,7 @@ esp32:
   board: ${board}
 
 logger:
-  level: DEBUG
+  level: VERBOSE
   hardware_uart: USB_SERIAL_JTAG
 
 esphome:
