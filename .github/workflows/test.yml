@@ -14,7 +14,7 @@ jobs:
           - "type=esp-idf version=recommended platform_version=5.4.0"
         board:
           - esp32-c3-devkitm-1
-          - esp32-s3-devkitm-1
+          - esp32-s3-devkitc-1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
