@@ -9,7 +9,8 @@ esp32:
   board: ${board}
 
 logger:
-  level: VERBOSE
+  level: DEBUG
+  hardware_uart: USB_SERIAL_JTAG
 
 esphome:
   name: "test-node"
